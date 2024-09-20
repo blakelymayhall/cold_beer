@@ -14,14 +14,17 @@ public class SprintController : MonoBehaviour
     //========================================================================
     void Start()
     {
-        if (movementController != null) {
+        if (movementController != null) 
+        {
             originalSpeed = movementController.moveSpeed;
         }
     }
 
     //========================================================================
-    public void SetSprinting(bool isSprinting) {
-        if (movementController != null) {
+    public void SetSprinting(bool isSprinting) 
+    {
+        if (movementController != null) 
+        {
             movementController.moveSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
         }
     }

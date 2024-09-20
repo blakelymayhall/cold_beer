@@ -23,12 +23,14 @@ public class PlayerInputManager : MonoBehaviour
     }
     
     //========================================================================
-    private void OnEnable() {
+    private void OnEnable() 
+    {
         inputActions.Enable();
     }
 
     //========================================================================
-    private void OnDisable() {
+    private void OnDisable() 
+    {
         inputActions.Disable();
     }
 
@@ -45,23 +47,29 @@ public class PlayerInputManager : MonoBehaviour
     }
 
     //========================================================================
-    private void OnMove(InputAction.CallbackContext context) {
-        if (movementController != null) {
+    private void OnMove(InputAction.CallbackContext context) 
+    {
+        if (movementController != null) 
+        {
             movementController.SetMovement(context.ReadValue<float>());
         }
     }
 
     //========================================================================
-    private void OnJump(InputAction.CallbackContext context) {
-        if (jumpController != null) {
+    private void OnJump(InputAction.CallbackContext context) 
+    {
+        if (jumpController != null) 
+        {
             jumpController.Jump();
         }
     }
 
     //========================================================================
-    private void OnSprint(InputAction.CallbackContext context) {
+    private void OnSprint(InputAction.CallbackContext context) 
+    {
         bool isSprinting = context.ReadValueAsButton();
-        if (sprintController != null) {
+        if (sprintController != null) 
+        {
             sprintController.SetSprinting(isSprinting);
         }
     }
