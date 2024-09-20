@@ -10,6 +10,7 @@ public class PlayerInputManager : MonoBehaviour
     public MovementController movementController;
     public JumpController jumpController;
     public SprintController sprintController;
+    public GrappleController grappleController;
 
     //========================================================================
     void Awake()
@@ -18,6 +19,7 @@ public class PlayerInputManager : MonoBehaviour
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled += OnMove;
         inputActions.Player.Jump.performed += OnJump;
+        inputActions.Player.Jump.canceled += OnJumpReleased;
         inputActions.Player.Sprint.performed += OnSprint;
         inputActions.Player.Sprint.canceled += OnSprint;
     }
@@ -55,7 +57,22 @@ public class PlayerInputManager : MonoBehaviour
     //========================================================================
     private void OnJump(InputAction.CallbackContext context) 
     {
-        jumpController.Jump();
+        if (grappleController.isGrappling)
+        {
+            grappleController.Climb();
+        }
+        else 
+        {
+            jumpController.Jump();
+        }
+    }
+    
+    private void OnJumpReleased(InputAction.CallbackContext context) 
+    {
+        if (grappleController.isGrappling)
+        {
+            grappleController.HoldPosition();
+        }
     }
 
     //========================================================================

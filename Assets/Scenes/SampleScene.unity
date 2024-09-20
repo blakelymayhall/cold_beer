@@ -161,6 +161,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3550079752822335882, guid: c47845a618bd14af2be74277ab74c000, type: 3}
+      propertyPath: m_Size.x
+      value: 0.9128636
+      objectReference: {fileID: 0}
+    - target: {fileID: 3550079752822335882, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_Size.y
       value: 1.2408566
       objectReference: {fileID: 0}
@@ -168,6 +172,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 6200000, guid: 6a77d02143d2b49bbbd0fbb3c24f0765, type: 2}
+    - target: {fileID: 3550079752822335882, guid: c47845a618bd14af2be74277ab74c000, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.060966685
+      objectReference: {fileID: 0}
     - target: {fileID: 3550079752822335882, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_Offset.y
       value: -0.031443477
@@ -198,11 +206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.065
+      value: 1.418
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.208
+      value: 0.964
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalPosition.z
@@ -258,6 +266,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5077362107726169654, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       insertIndex: -1
       addedObject: {fileID: 398661468}
+    - targetCorrespondingSourceObject: {fileID: 5077362107726169654, guid: c47845a618bd14af2be74277ab74c000, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 398661469}
   m_SourcePrefab: {fileID: 100100000, guid: c47845a618bd14af2be74277ab74c000, type: 3}
 --- !u!1 &398661457 stripped
 GameObject:
@@ -284,6 +295,7 @@ MonoBehaviour:
   movementController: {fileID: 398661465}
   jumpController: {fileID: 398661464}
   sprintController: {fileID: 398661463}
+  grappleController: {fileID: 398661469}
 --- !u!114 &398661463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +377,21 @@ MonoBehaviour:
   sprintController: {fileID: 398661463}
   rigidBody: {fileID: 398661458}
   spriteRenderer: {fileID: 398661467}
+--- !u!114 &398661469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398661457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 222b8def12ad84cb79e16f12afa09cda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementController: {fileID: 398661465}
+  rigidBody: {fileID: 398661458}
+  isGrappling: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
