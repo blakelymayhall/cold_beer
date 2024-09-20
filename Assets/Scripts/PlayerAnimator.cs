@@ -33,26 +33,44 @@ public class PlayerAnimator : MonoBehaviour
     {
         timer += Time.deltaTime;
 
+        // Handle idle state
         if (movementController.movementInput == 0)
         {
-            timer = 0f;
-            spriteRenderer.sprite = stillSprite;
-            spriteIndex = 1;
+            ResetToIdle();
+            return;
         }
 
-        if(movementController.movementInput != 0 && (spriteRenderer.sprite == stillSprite || 
-            Mathf.Sign(movementController.movementInput) != Mathf.Sign(lastMoveInput)) ) 
+        // Handle direction change
+        if (spriteRenderer.sprite == stillSprite || 
+            Mathf.Sign(movementController.movementInput) != Mathf.Sign(lastMoveInput))
         {
             lastMoveInput = movementController.movementInput;
             bool walkingRight = movementController.movementInput > 0;
-            activeSprites =  walkingRight ? movingRightSprites : movingLeftSprites;
+            activeSprites = walkingRight ? movingRightSprites : movingLeftSprites;
             spriteRenderer.sprite = activeSprites[spriteIndex];
         }
-        else if (timer > (sprintController.isSprinting ? runTime : walkTime))
+
+        // Handle sprite animation update
+        float animationTime = sprintController.isSprinting ? runTime : walkTime;
+        if (timer > animationTime)
         {
-            timer = 0f;
-            spriteIndex = (spriteIndex + 1) % activeSprites.Count;
-            spriteRenderer.sprite =  jumpController.IsJumping() ? activeSprites[0] : activeSprites[spriteIndex];
+            UpdateSpriteAnimation();
         }
     }
+
+    //========================================================================
+    void ResetToIdle()
+    {
+        timer = 0f;
+        spriteRenderer.sprite = stillSprite;
+        spriteIndex = 1;
+    }
+
+    //========================================================================
+    void UpdateSpriteAnimation()
+    {
+        timer = 0f;
+        spriteIndex = (spriteIndex + 1) % activeSprites.Count;
+        spriteRenderer.sprite = jumpController.IsJumping() ? activeSprites[0] : activeSprites[spriteIndex];
+    } 
 }
