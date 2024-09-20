@@ -6,26 +6,30 @@ using UnityEngine.InputSystem;
 public class SprintController : MonoBehaviour
 {
     //========================================================================
-    public float sprintMultiplier = 2f;
+    public float sprintMultiplier;
     public float originalSpeed;
     public MovementController movementController;
+    public JumpController jumpController;
+    public bool isSprinting = false;
     //========================================================================
+    private bool sprintingInputPressed = false;
 
     //========================================================================
     void Start()
     {
-        if (movementController != null) 
-        {
-            originalSpeed = movementController.moveSpeed;
-        }
+        originalSpeed = movementController.moveSpeed;
     }
 
     //========================================================================
-    public void SetSprinting(bool isSprinting) 
+    void FixedUpdate()
     {
-        if (movementController != null) 
-        {
-            movementController.moveSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
-        }
+        isSprinting = sprintingInputPressed && !jumpController.IsJumping();
+        movementController.moveSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
+    }
+
+    //========================================================================
+    public void SetSprintingInput(bool inputSprintActionPressed) 
+    {
+        sprintingInputPressed = inputSprintActionPressed;
     }
 }

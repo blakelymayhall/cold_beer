@@ -49,28 +49,19 @@ public class PlayerInputManager : MonoBehaviour
     //========================================================================
     private void OnMove(InputAction.CallbackContext context) 
     {
-        if (movementController != null) 
-        {
-            movementController.SetMovement(context.ReadValue<float>());
-        }
+        movementController.SetMovement(context.ReadValue<float>());
     }
 
     //========================================================================
     private void OnJump(InputAction.CallbackContext context) 
     {
-        if (jumpController != null) 
-        {
-            jumpController.Jump();
-        }
+        jumpController.Jump();
     }
 
     //========================================================================
     private void OnSprint(InputAction.CallbackContext context) 
     {
-        bool isSprinting = context.ReadValueAsButton();
-        if (sprintController != null) 
-        {
-            sprintController.SetSprinting(isSprinting);
-        }
+        bool sprintingInputPressed = context.ReadValueAsButton();
+        sprintController.SetSprintingInput(sprintingInputPressed);
     }
 }

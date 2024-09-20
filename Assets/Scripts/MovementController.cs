@@ -5,10 +5,11 @@ using UnityEngine;
 public class MovementController : MonoBehaviour
 {
     //========================================================================
-    public float moveSpeed = 5f;
-    public Rigidbody2D rb;
+    public float moveSpeed;
+    public Rigidbody2D rigidBody;
+    public float movementInput;
     //========================================================================
-    private float movementInput;
+    
 
     //========================================================================
     void Start()
@@ -19,10 +20,7 @@ public class MovementController : MonoBehaviour
     //========================================================================
     private void FixedUpdate() 
     {
-        if (rb != null) 
-        {
-            rb.velocity = new Vector2(movementInput * moveSpeed, rb.velocity.y);
-        }
+        rigidBody.velocity = new Vector2(movementInput * moveSpeed, rigidBody.velocity.y);
     }
 
     //========================================================================
