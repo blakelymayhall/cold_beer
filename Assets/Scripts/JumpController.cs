@@ -9,6 +9,7 @@ public class JumpController : MonoBehaviour
     public float sprintJumpForce;
     public Rigidbody2D rigidBody;
     public SprintController sprintController;
+    public GrappleController grappleController;
     //========================================================================
 
     //========================================================================
@@ -18,9 +19,9 @@ public class JumpController : MonoBehaviour
     }
 
     //========================================================================
-    public void Jump() 
+    public void Jump(bool forceJump = false) 
     {
-        if(CanJump())
+        if(CanJump() || forceJump)
         {
             float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
             rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
@@ -37,7 +38,7 @@ public class JumpController : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDirection, rayLength, ~LayerMask.GetMask("Player"));
 
-        return hit.collider != null && hit.collider.CompareTag("Terrain");
+        return hit.collider != null && hit.collider.CompareTag("Terrain") && !grappleController.isGrappling;
     }
 
     //======================================================================== 

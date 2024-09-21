@@ -57,23 +57,14 @@ public class PlayerInputManager : MonoBehaviour
     //========================================================================
     private void OnJump(InputAction.CallbackContext context) 
     {
-        if (grappleController.isGrappling)
-        {
-            grappleController.Climb();
-        }
-        else 
-        {
-            jumpController.Jump();
-        }
+        grappleController.Climb();
+        jumpController.Jump();
     }
     
     //========================================================================
     private void OnJumpReleased(InputAction.CallbackContext context) 
     {
-        if (grappleController.isGrappling)
-        {
-            grappleController.HoldPosition();
-        }
+        grappleController.Reset();
     }
 
     //========================================================================

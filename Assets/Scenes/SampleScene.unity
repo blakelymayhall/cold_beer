@@ -329,6 +329,7 @@ MonoBehaviour:
   sprintJumpForce: 500
   rigidBody: {fileID: 398661458}
   sprintController: {fileID: 398661463}
+  grappleController: {fileID: 398661469}
 --- !u!114 &398661465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,6 +392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerAnimator: {fileID: 398661468}
   movementController: {fileID: 398661465}
+  jumpController: {fileID: 398661464}
   rigidBody: {fileID: 398661458}
   isGrappling: 0
 --- !u!1 &519420028

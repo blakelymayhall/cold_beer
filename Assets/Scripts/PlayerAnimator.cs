@@ -22,6 +22,8 @@ public class PlayerAnimator : MonoBehaviour
     private float runTime = 0.15f;
     private int spriteIndex = 1;
     private float lastMoveInput = 0;
+    private bool jumpButtonPressed = false;
+    private Sprite lastGrappleSprite;
     //========================================================================
 
     void Start()
@@ -60,7 +62,26 @@ public class PlayerAnimator : MonoBehaviour
         // Grappling 
         if(jumpController.IsJumping() && grappleController.isGrappling)
         {
-            // Handled in grapple controller
+            if (jumpButtonPressed)
+            {
+                timer = 0f;
+                if(lastGrappleSprite == activeSprites[1])
+                {
+                    spriteRenderer.sprite = activeSprites[3];
+                }
+                else 
+                {
+                    spriteRenderer.sprite = activeSprites[1];
+                }
+                lastGrappleSprite = spriteRenderer.sprite;
+                jumpButtonPressed = false;
+            }
+
+            if (timer > walkTime)
+            {
+                spriteRenderer.sprite = activeSprites[0];
+            }
+
             return;
         }
 
@@ -73,10 +94,9 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     //========================================================================
-    public void ManuallyCycleSprite()
+    public void SetJumpButtonPressed()
     {
-        spriteIndex = (spriteIndex + 1) % activeSprites.Count;
-        spriteRenderer.sprite = activeSprites[spriteIndex];
+        jumpButtonPressed = true;
     }
 
     //========================================================================
