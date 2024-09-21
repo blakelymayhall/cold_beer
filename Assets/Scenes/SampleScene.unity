@@ -375,7 +375,7 @@ MonoBehaviour:
   movementController: {fileID: 398661465}
   jumpController: {fileID: 398661464}
   sprintController: {fileID: 398661463}
-  rigidBody: {fileID: 398661458}
+  grappleController: {fileID: 398661469}
   spriteRenderer: {fileID: 398661467}
 --- !u!114 &398661469
 MonoBehaviour:
@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222b8def12ad84cb79e16f12afa09cda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAnimator: {fileID: 398661468}
   movementController: {fileID: 398661465}
   rigidBody: {fileID: 398661458}
   isGrappling: 0

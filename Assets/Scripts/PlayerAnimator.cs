@@ -13,7 +13,7 @@ public class PlayerAnimator : MonoBehaviour
     public MovementController movementController;
     public JumpController jumpController;
     public SprintController sprintController;
-    public Rigidbody2D rigidBody;
+    public GrappleController grappleController;
     public SpriteRenderer spriteRenderer;
     //========================================================================
     private List<Sprite> activeSprites;
@@ -50,12 +50,33 @@ public class PlayerAnimator : MonoBehaviour
             spriteRenderer.sprite = activeSprites[spriteIndex];
         }
 
-        // Handle sprite animation update
+        // Jumping
+        if(jumpController.IsJumping() && !grappleController.isGrappling)
+        {
+            spriteRenderer.sprite = activeSprites[0];
+            return;
+        }
+
+        // Grappling 
+        if(jumpController.IsJumping() && grappleController.isGrappling)
+        {
+            // Handled in grapple controller
+            return;
+        }
+
+        // Walking / Sprinting 
         float animationTime = sprintController.isSprinting ? runTime : walkTime;
         if (timer > animationTime)
         {
             UpdateSpriteAnimation();
         }
+    }
+
+    //========================================================================
+    public void ManuallyCycleSprite()
+    {
+        spriteIndex = (spriteIndex + 1) % activeSprites.Count;
+        spriteRenderer.sprite = activeSprites[spriteIndex];
     }
 
     //========================================================================
@@ -71,6 +92,6 @@ public class PlayerAnimator : MonoBehaviour
     {
         timer = 0f;
         spriteIndex = (spriteIndex + 1) % activeSprites.Count;
-        spriteRenderer.sprite = jumpController.IsJumping() ? activeSprites[0] : activeSprites[spriteIndex];
+        spriteRenderer.sprite = activeSprites[spriteIndex];
     } 
 }

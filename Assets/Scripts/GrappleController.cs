@@ -5,6 +5,7 @@ using UnityEngine;
 public class GrappleController : MonoBehaviour
 {
     //========================================================================
+    public PlayerAnimator playerAnimator;
     public MovementController movementController;
     public Rigidbody2D rigidBody;
     public bool isGrappling;
@@ -51,7 +52,8 @@ public class GrappleController : MonoBehaviour
     //========================================================================
     public void Climb()
     {
-        rigidBody.velocity = new Vector2(rigidBody.velocity.x, 5f);
+        playerAnimator.ManuallyCycleSprite();
+        rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * 400f, ForceMode2D.Impulse);
     }
     
     //========================================================================
