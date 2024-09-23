@@ -15,6 +15,9 @@ public class GrappleController : MonoBehaviour
     private bool performStep = false;
     private MovementController movementController;
     private JumpController jumpController;
+    private float timer = 0f;
+
+    private const float beginFallTime = 0.45f;
     //========================================================================
 
     void Start()
@@ -25,8 +28,10 @@ public class GrappleController : MonoBehaviour
     }
 
     //========================================================================
-    void Update()
+    void FixedUpdate()
     {
+        timer += Time.deltaTime;
+
         if (!IsContactingWall())
         {
             isGrappling = false;
@@ -40,22 +45,35 @@ public class GrappleController : MonoBehaviour
             rigidBody.gravityScale = 0;
             rigidBody.velocity = Vector2.zero;
             isGrappling = true;
+            timer = 0;
         }
 
-        if(isGrappling && performStep)
+        if(isGrappling)
         {
-            // In grappling mode, each Jump-button strike will move the player up the wall
-            if(IsHeadAboveWall())
+            // Start falling if holding for too long
+            if (timer > beginFallTime)
             {
-                jumpController.Jump(true);
+                rigidBody.gravityScale = originalGravityScale / 3;
             }
-            else 
-            {
-                Vector2 newPosition = rigidBody.position + new Vector2(0, grappleJumpDistance * Time.fixedDeltaTime);
-                rigidBody.MovePosition(newPosition);
-            }   
 
-            performStep = false;
+            // In grappling mode, each Jump-button strike will move the player up the wall
+            if(performStep)
+            {
+                if(IsHeadAboveWall())
+                {
+                    jumpController.Jump(true);
+                }
+                else 
+                {
+                    Vector2 newPosition = rigidBody.position + new Vector2(0, grappleJumpDistance * Time.fixedDeltaTime);
+                    rigidBody.MovePosition(newPosition);
+                    timer = 0;
+                    rigidBody.gravityScale = 0;
+                    rigidBody.velocity = Vector2.zero;
+                }   
+
+                performStep = false;
+            }
         }
     }
 
