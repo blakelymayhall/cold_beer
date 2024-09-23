@@ -38,6 +38,12 @@ public class JumpController : MonoBehaviour
         }
     }
 
+    //========================================================================
+    public void SetCanJumpOffWall(bool setting)
+    {
+        canJumpOffWall = setting;
+    }    
+
     //======================================================================== 
     public void JumpOffWall()
     {
@@ -56,10 +62,4 @@ public class JumpController : MonoBehaviour
 
         return hit.collider != null && hit.collider.CompareTag("Terrain") && !grappleController.isGrappling;
     }
-
-    //========================================================================
-    public void SetCanJumpOffWall(bool setting)
-    {
-        canJumpOffWall = setting;
-    }    
 }

@@ -328,7 +328,7 @@ MonoBehaviour:
   sprintJumpForce: 500
   rigidBody: {fileID: 398661458}
   inputManager: {fileID: 398661462}
-  canJump: 0
+  canJumpOffWall: 0
 --- !u!114 &398661465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,6 +391,7 @@ MonoBehaviour:
   rigidBody: {fileID: 398661458}
   isGrappling: 0
   grappleJumpDistance: 15
+  jumpForce: 300
   inputManager: {fileID: 398661462}
 --- !u!1 &519420028
 GameObject:
