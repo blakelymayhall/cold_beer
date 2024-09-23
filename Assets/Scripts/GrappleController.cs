@@ -35,16 +35,21 @@ public class GrappleController : MonoBehaviour
         if (!IsContactingWall())
         {
             isGrappling = false;
-            rigidBody.gravityScale = originalGravityScale;
+            if (timer > 0.25f)
+            {
+                rigidBody.gravityScale = originalGravityScale;
+                jumpController.SetCanJumpOffWall(false); 
+            }            
             return;
         }
 
-        if(!isGrappling)
+        if(!isGrappling && IsContactingWall())
         {
             // Start grappling mode
             rigidBody.gravityScale = 0;
             rigidBody.velocity = Vector2.zero;
             isGrappling = true;
+            jumpController.SetCanJumpOffWall(true);
             timer = 0;
         }
 
@@ -61,7 +66,8 @@ public class GrappleController : MonoBehaviour
             {
                 if(IsHeadAboveWall())
                 {
-                    jumpController.Jump(true);
+                    rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * 500f, ForceMode2D.Impulse);
+                    rigidBody.gravityScale = originalGravityScale;
                 }
                 else 
                 {
@@ -93,11 +99,8 @@ public class GrappleController : MonoBehaviour
     //========================================================================
     public void Climb()
     {
-        if (isGrappling)
-        {
-            playerAnimator.SetJumpButtonPressed();
-            performStep = true;
-        }
+        playerAnimator.SetJumpButtonPressed();
+        performStep = true;
     }
 
     //========================================================================

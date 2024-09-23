@@ -76,12 +76,12 @@ public class PlayerAnimator : MonoBehaviour
             return PlayerAnimationType.Still;
         }
 
-        if (jumpController.IsJumping() && !grappleController.isGrappling)
+        if (!jumpController.PlayerTouchingGround() && !grappleController.isGrappling)
         {
             return PlayerAnimationType.Jumping;
         }
 
-        if (jumpController.IsJumping() && grappleController.isGrappling)
+        if (!jumpController.PlayerTouchingGround() && grappleController.isGrappling)
         {
             return PlayerAnimationType.Climbing;
         }

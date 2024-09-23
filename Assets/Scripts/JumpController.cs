@@ -12,6 +12,7 @@ public class JumpController : MonoBehaviour
     //========================================================================
     private SprintController sprintController;
     private GrappleController grappleController;
+    public bool canJumpOffWall = false;
 
     //========================================================================
     void Start()
@@ -21,9 +22,16 @@ public class JumpController : MonoBehaviour
     }
 
     //========================================================================
-    public void Jump(bool forceJump = false) 
+    public void Jump() 
     {
-        if(CanJump() || forceJump)
+        if(canJumpOffWall)
+        {
+            rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * normalJumpForce/2, ForceMode2D.Impulse);
+            canJumpOffWall = false;
+            return;
+        }
+        
+        if(PlayerTouchingGround())
         {
             float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
             rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
@@ -31,7 +39,13 @@ public class JumpController : MonoBehaviour
     }
 
     //======================================================================== 
-    private bool CanJump()
+    public void JumpOffWall()
+    {
+        rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * normalJumpForce / 2, ForceMode2D.Impulse);
+    }
+
+    //======================================================================== 
+    public bool PlayerTouchingGround()
     {
         Collider2D playerCollider = GetComponent<Collider2D>();
         Vector2 rayStart = (Vector2)transform.position - new Vector2(0, playerCollider.bounds.extents.y); 
@@ -43,9 +57,9 @@ public class JumpController : MonoBehaviour
         return hit.collider != null && hit.collider.CompareTag("Terrain") && !grappleController.isGrappling;
     }
 
-    //======================================================================== 
-    public bool IsJumping()
+    //========================================================================
+    public void SetCanJumpOffWall(bool setting)
     {
-        return !CanJump();
-    }
+        canJumpOffWall = setting;
+    }    
 }
