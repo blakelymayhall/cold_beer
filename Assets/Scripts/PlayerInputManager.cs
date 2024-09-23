@@ -19,7 +19,6 @@ public class PlayerInputManager : MonoBehaviour
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled += OnMove;
         inputActions.Player.Jump.started += OnJump;
-        inputActions.Player.Jump.canceled += OnJumpReleased;
         inputActions.Player.Sprint.performed += OnSprint;
         inputActions.Player.Sprint.canceled += OnSprint;
     }
@@ -37,18 +36,6 @@ public class PlayerInputManager : MonoBehaviour
     }
 
     //========================================================================
-    void Start()
-    {
-        
-    }
-
-    //========================================================================
-    void Update()
-    {
-        
-    }
-
-    //========================================================================
     private void OnMove(InputAction.CallbackContext context) 
     {
         movementController.SetMovement(context.ReadValue<float>());
@@ -59,12 +46,6 @@ public class PlayerInputManager : MonoBehaviour
     {
         grappleController.Climb();
         jumpController.Jump();
-    }
-    
-    //========================================================================
-    private void OnJumpReleased(InputAction.CallbackContext context) 
-    {
-        grappleController.Reset();
     }
 
     //========================================================================

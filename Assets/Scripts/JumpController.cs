@@ -8,14 +8,16 @@ public class JumpController : MonoBehaviour
     public float normalJumpForce;
     public float sprintJumpForce;
     public Rigidbody2D rigidBody;
-    public SprintController sprintController;
-    public GrappleController grappleController;
+    public PlayerInputManager inputManager;
     //========================================================================
+    private SprintController sprintController;
+    private GrappleController grappleController;
 
     //========================================================================
     void Start()
     {
-        
+        sprintController = inputManager.sprintController;
+        grappleController = inputManager.grappleController;
     }
 
     //========================================================================

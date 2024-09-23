@@ -198,11 +198,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.33
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.33
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 6491040906271078363, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       propertyPath: m_LocalPosition.x
@@ -310,9 +310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprintMultiplier: 1.7
   originalSpeed: 0
-  movementController: {fileID: 398661465}
-  jumpController: {fileID: 398661464}
   isSprinting: 0
+  inputManager: {fileID: 398661462}
 --- !u!114 &398661464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,8 +327,7 @@ MonoBehaviour:
   normalJumpForce: 400
   sprintJumpForce: 500
   rigidBody: {fileID: 398661458}
-  sprintController: {fileID: 398661463}
-  grappleController: {fileID: 398661469}
+  inputManager: {fileID: 398661462}
 --- !u!114 &398661465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,11 +371,8 @@ MonoBehaviour:
   - {fileID: 1734934453, guid: f1da8ad93b7f04114af71151be55b4c4, type: 3}
   - {fileID: 110522334, guid: f1da8ad93b7f04114af71151be55b4c4, type: 3}
   stillSprite: {fileID: 1314633090, guid: f1da8ad93b7f04114af71151be55b4c4, type: 3}
-  movementController: {fileID: 398661465}
-  jumpController: {fileID: 398661464}
-  sprintController: {fileID: 398661463}
-  grappleController: {fileID: 398661469}
   spriteRenderer: {fileID: 398661467}
+  inputManager: {fileID: 398661462}
 --- !u!114 &398661469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,10 +386,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAnimator: {fileID: 398661468}
-  movementController: {fileID: 398661465}
-  jumpController: {fileID: 398661464}
   rigidBody: {fileID: 398661458}
   isGrappling: 0
+  grappleJumpDistance: 15
+  inputManager: {fileID: 398661462}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

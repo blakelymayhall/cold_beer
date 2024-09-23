@@ -6,17 +6,21 @@ public class GrappleController : MonoBehaviour
 {
     //========================================================================
     public PlayerAnimator playerAnimator;
-    public MovementController movementController;
-    public JumpController jumpController;
     public Rigidbody2D rigidBody;
     public bool isGrappling = false;
+    public float grappleJumpDistance = 15f;
+    public PlayerInputManager inputManager;
     //========================================================================
     private float originalGravityScale;
     private bool performStep = false;
+    private MovementController movementController;
+    private JumpController jumpController;
     //========================================================================
 
     void Start()
     {
+        movementController = inputManager.movementController;
+        jumpController = inputManager.jumpController;
         originalGravityScale = rigidBody.gravityScale;
     }
 
@@ -25,12 +29,14 @@ public class GrappleController : MonoBehaviour
     {
         if (!IsContactingWall())
         {
-            Reset();
+            isGrappling = false;
+            rigidBody.gravityScale = originalGravityScale;
             return;
         }
 
         if(!isGrappling)
         {
+            // Start grappling mode
             rigidBody.gravityScale = 0;
             rigidBody.velocity = Vector2.zero;
             isGrappling = true;
@@ -38,21 +44,17 @@ public class GrappleController : MonoBehaviour
 
         if(isGrappling && performStep)
         {
-            Collider2D playerCollider = GetComponent<Collider2D>();
-            Vector2 direction = movementController.movementInput > 0 ? Vector2.right : Vector2.left;
-            Vector2 rayStart = (Vector2)transform.position + new Vector2(0, playerCollider.bounds.extents.y); 
-            float wallCheckDistance = 0.25f;
-            Debug.DrawRay(rayStart, direction * wallCheckDistance, Color.red);
-            RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
-            if(hit.collider == null || !hit.collider.CompareTag("Terrain"))
+            // In grappling mode, each Jump-button strike will move the player up the wall
+            if(IsHeadAboveWall())
             {
                 jumpController.Jump(true);
             }
             else 
             {
-                Vector2 newPosition = rigidBody.position + new Vector2(0, 15f * Time.fixedDeltaTime);
+                Vector2 newPosition = rigidBody.position + new Vector2(0, grappleJumpDistance * Time.fixedDeltaTime);
                 rigidBody.MovePosition(newPosition);
             }   
+
             performStep = false;
         }
     }
@@ -79,11 +81,16 @@ public class GrappleController : MonoBehaviour
             performStep = true;
         }
     }
-    
+
     //========================================================================
-    public void Reset()
+    private bool IsHeadAboveWall()
     {
-        isGrappling = false;
-        rigidBody.gravityScale = originalGravityScale;
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        Vector2 direction = movementController.movementInput > 0 ? Vector2.right : Vector2.left;
+        Vector2 rayStart = (Vector2)transform.position + new Vector2(0, playerCollider.bounds.extents.y); 
+        float wallCheckDistance = 0.25f;
+        Debug.DrawRay(rayStart, direction * wallCheckDistance, Color.red);
+        RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
+        return hit.collider == null || !hit.collider.CompareTag("Terrain");
     }
 }

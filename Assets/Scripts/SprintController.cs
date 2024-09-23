@@ -8,15 +8,18 @@ public class SprintController : MonoBehaviour
     //========================================================================
     public float sprintMultiplier;
     public float originalSpeed;
-    public MovementController movementController;
-    public JumpController jumpController;
     public bool isSprinting = false;
+    public PlayerInputManager inputManager;
     //========================================================================
+    private MovementController movementController;
+    private JumpController jumpController;
     private bool sprintingInputPressed = false;
 
     //========================================================================
     void Start()
     {
+        jumpController = inputManager.jumpController;
+        movementController = inputManager.movementController;
         originalSpeed = movementController.moveSpeed;
     }
 
