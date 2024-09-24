@@ -88,6 +88,24 @@ public class JumpController : MonoBehaviour
 
         if(jumpControllerState == JumpControllerState.Climbing_Step)
         {
+            if (IsHeadAboveWall())
+            {
+                return JumpControllerState.Climbing_OverLedge;
+            }
+            if(!IsContactingWall() && !IsHeadAboveWall())
+            {
+                isClimbing = false;
+                rigidBody.gravityScale = originalGravityScale;
+                if (jumpTimer - timeLastJump < 0.15f)
+                {
+                    float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
+                    rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
+                    jumpTimer = 0;
+                    timeLastJump = 999f;
+                }
+                return JumpControllerState.Airborne;
+            }
+
             if(Vector2.Distance(rigidBody.position, climbStepTarget) < 0.01)
             {
                 return JumpControllerState.Init_Climbing;
@@ -116,20 +134,6 @@ public class JumpController : MonoBehaviour
             {
                 return JumpControllerState.Init_Climbing;
             }
-        }
-
-        if(!IsContactingWall() && isClimbing && !IsHeadAboveWall())
-        {
-            isClimbing = false;
-            rigidBody.gravityScale = originalGravityScale;
-            if (jumpTimer - timeLastJump < 0.15f)
-            {
-                float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
-                rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
-                jumpTimer = 0;
-                timeLastJump = 999f;
-            }
-            return JumpControllerState.Airborne;
         }
 
         return JumpControllerState.Airborne;
