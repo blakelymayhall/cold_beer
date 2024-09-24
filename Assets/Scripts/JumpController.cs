@@ -86,11 +86,6 @@ public class JumpController : MonoBehaviour
             return JumpControllerState.Walking_Running;
         }
 
-        if (jumpControllerState == JumpControllerState.Climbing_DirectionChange)
-        {
-            return JumpControllerState.Climbing_DirectionChange;
-        }
-
         if(jumpControllerState == JumpControllerState.Climbing_Step)
         {
             if(Vector2.Distance(rigidBody.position, climbStepTarget) < 0.01)
@@ -132,10 +127,9 @@ public class JumpController : MonoBehaviour
                 float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
                 rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
                 jumpTimer = 0;
-                Debug.Log("Jump Before Release");
-                return JumpControllerState.Airborne;
+                timeLastJump = 999f;
             }
-            return JumpControllerState.Climbing_DirectionChange;
+            return JumpControllerState.Airborne;
         }
 
         return JumpControllerState.Airborne;
@@ -170,16 +164,6 @@ public class JumpController : MonoBehaviour
             {
                 jumpControllerState = JumpControllerState.Airborne;
                 goto case JumpControllerState.Walking_Running;
-            }
-            case JumpControllerState.Climbing_DirectionChange:
-            {
-                jumpControllerState = JumpControllerState.Airborne;
-                if (IsNearWall())
-                {
-                    Debug.Log("Jump After Release");
-                    goto case JumpControllerState.Walking_Running;
-                }
-                break;
             }
         }
     }
@@ -218,16 +202,6 @@ public class JumpController : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
         return hit.collider == null || !hit.collider.CompareTag("Terrain");
     }
-
-    //========================================================================
-    bool IsNearWall()
-    {
-        Vector2 rayOrigin = transform.position;
-        Vector2 rayDirection = wallDirection > 0 ? Vector2.right : Vector2.left;
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, 10f, ~LayerMask.GetMask("Player"));
-        return hit.collider != null && hit.distance < 1f && hit.collider.CompareTag("Terrain");
-    }
-
 }
 
 public enum JumpControllerState
