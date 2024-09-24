@@ -26,7 +26,7 @@ public class SprintController : MonoBehaviour
     //========================================================================
     void FixedUpdate()
     {
-        isSprinting = sprintingInputPressed && jumpController.PlayerTouchingGround();
+        isSprinting = sprintingInputPressed && jumpController.jumpControllerState == JumpControllerState.Walking_Running;
         movementController.moveSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
     }
 

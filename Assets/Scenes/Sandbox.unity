@@ -266,9 +266,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5077362107726169654, guid: c47845a618bd14af2be74277ab74c000, type: 3}
       insertIndex: -1
       addedObject: {fileID: 398661468}
-    - targetCorrespondingSourceObject: {fileID: 5077362107726169654, guid: c47845a618bd14af2be74277ab74c000, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 398661469}
   m_SourcePrefab: {fileID: 100100000, guid: c47845a618bd14af2be74277ab74c000, type: 3}
 --- !u!1 &398661457 stripped
 GameObject:
@@ -295,7 +292,7 @@ MonoBehaviour:
   movementController: {fileID: 398661465}
   jumpController: {fileID: 398661464}
   sprintController: {fileID: 398661463}
-  grappleController: {fileID: 398661469}
+  grappleController: {fileID: 0}
 --- !u!114 &398661463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,9 +323,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalJumpForce: 400
   sprintJumpForce: 500
+  climbSpeed: 50
   rigidBody: {fileID: 398661458}
   inputManager: {fileID: 398661462}
-  canJumpOffWall: 0
+  jumpControllerState: 0
+  playerAnimator: {fileID: 398661468}
+  isClimbing: 0
 --- !u!114 &398661465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,24 +375,6 @@ MonoBehaviour:
   spriteRenderer: {fileID: 398661467}
   inputManager: {fileID: 398661462}
   playerAnimationState: 0
---- !u!114 &398661469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 398661457}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 222b8def12ad84cb79e16f12afa09cda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerAnimator: {fileID: 398661468}
-  rigidBody: {fileID: 398661458}
-  isGrappling: 0
-  grappleJumpDistance: 15
-  jumpForce: 300
-  inputManager: {fileID: 398661462}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

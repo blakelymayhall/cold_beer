@@ -81,7 +81,7 @@ public class GrappleController : MonoBehaviour
         rigidBody.gravityScale = originalGravityScale;
         if (ShouldTurnOffWallJump())
         {
-            jumpController.SetCanJumpOffWall(false); 
+            //jumpController.SetCanJumpOffWall(false); 
         }        
     }
     
@@ -93,7 +93,7 @@ public class GrappleController : MonoBehaviour
         rigidBody.gravityScale = 0;
         rigidBody.velocity = Vector2.zero;
         isGrappling = true;
-        jumpController.SetCanJumpOffWall(true);
+        //jumpController.SetCanJumpOffWall(true);
         timer = 0;
     }
     

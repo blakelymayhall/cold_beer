@@ -76,12 +76,13 @@ public class PlayerAnimator : MonoBehaviour
             return PlayerAnimationType.Still;
         }
 
-        if (!jumpController.PlayerTouchingGround() && !grappleController.isGrappling)
+        if (jumpController.jumpControllerState == JumpControllerState.Airborne)
         {
             return PlayerAnimationType.Jumping;
         }
 
-        if (!jumpController.PlayerTouchingGround() && grappleController.isGrappling)
+        if (jumpController.jumpControllerState == JumpControllerState.Climbing || 
+        jumpController.jumpControllerState == JumpControllerState.Climbing_Falling)
         {
             return PlayerAnimationType.Climbing;
         }
