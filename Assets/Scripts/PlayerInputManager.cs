@@ -9,10 +9,8 @@ public class PlayerInputManager : MonoBehaviour
     public InputActions inputActions;
     public MovementController movementController;
     public JumpController jumpController;
-    public SprintController sprintController;
-    public GrappleController grappleController;
-    //========================================================================
 
+    //========================================================================
     void Awake()
     {
         inputActions = new InputActions();
@@ -44,20 +42,12 @@ public class PlayerInputManager : MonoBehaviour
     //========================================================================
     private void OnJump(InputAction.CallbackContext context) 
     {
-        if (grappleController.isGrappling)
-        {
-            grappleController.Climb();
-        }
-        else 
-        {
-            jumpController.Jump();
-        }
+        jumpController.Jump();
     }
 
     //========================================================================
     private void OnSprint(InputAction.CallbackContext context) 
     {
-        bool sprintingInputPressed = context.ReadValueAsButton();
-        sprintController.SetSprintingInput(sprintingInputPressed);
+        movementController.SetSprintingInput(context.ReadValueAsButton());
     }
 }

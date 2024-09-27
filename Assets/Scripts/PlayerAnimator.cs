@@ -15,8 +15,6 @@ public class PlayerAnimator : MonoBehaviour
     //========================================================================
     private MovementController movementController;
     private JumpController jumpController;
-    private SprintController sprintController;
-    private GrappleController grappleController;
     private List<Sprite> activeSprites;
     private float timer = 0f;
     private int spriteIndex = 1;
@@ -26,12 +24,10 @@ public class PlayerAnimator : MonoBehaviour
 
     private const float walkTime = 0.2f;
     private const float runTime = 0.15f;
-    //========================================================================
 
+    //========================================================================
     void Start()
     {        
-        sprintController = inputManager.sprintController;
-        grappleController = inputManager.grappleController;
         jumpController = inputManager.jumpController;
         movementController = inputManager.movementController;
     }
@@ -76,12 +72,13 @@ public class PlayerAnimator : MonoBehaviour
             return PlayerAnimationType.Still;
         }
 
-        if (!jumpController.PlayerTouchingGround() && !grappleController.isGrappling)
+        if (jumpController.jumpControllerState == JumpControllerState.Airborne)
         {
             return PlayerAnimationType.Jumping;
         }
 
-        if (!jumpController.PlayerTouchingGround() && grappleController.isGrappling)
+        if (jumpController.jumpControllerState == JumpControllerState.Climbing || 
+        jumpController.jumpControllerState == JumpControllerState.Climbing_Falling)
         {
             return PlayerAnimationType.Climbing;
         }
@@ -143,7 +140,7 @@ public class PlayerAnimator : MonoBehaviour
     //========================================================================
     void Walking_Running_Animation()
     {
-        float animationTime = sprintController.isSprinting ? runTime : walkTime;
+        float animationTime = movementController.isSprinting ? runTime : walkTime;
         if (timer > animationTime)
         {
             timer = 0f;
