@@ -10,12 +10,13 @@ public class JumpController : MonoBehaviour
     public float normalJumpForce;
     public float sprintJumpForce;
     public float climbSpeed;
+    public float jumpAscentGravityScale;
+    public float jumpDescentGravityScale;
     public Rigidbody2D rigidBody;
     public PlayerInputManager inputManager;
     public JumpControllerState jumpControllerState;
     public PlayerAnimator playerAnimator;
     //========================================================================
-    private SprintController sprintController;
     private MovementController movementController;
     public bool isClimbing = false;
     private float originalGravityScale;
@@ -25,33 +26,103 @@ public class JumpController : MonoBehaviour
     private float jumpTimer;
     private float timeLastJump;
 
-    private const float beginFallTime = 0.45f;
+    private const float beginFallTime_sec = 0.45f;
+    private const float allowWallJumpTimeThreshold_sec = 0.15f;
+    private const float climbDistance = 50f;
+
     //========================================================================
     void Start()
     {
-        sprintController = inputManager.sprintController;
         movementController = inputManager.movementController;
         jumpControllerState = JumpControllerState.Walking_Running;
         originalGravityScale = rigidBody.gravityScale;
     }
-
+    
+    //========================================================================  
     void FixedUpdate()
     {
         fallTimer += Time.fixedDeltaTime;
         jumpTimer += Time.fixedDeltaTime;
 
         jumpControllerState = SetJumpState();
+        SetAncillariesBasedOnState();
+        
+    }
+
+    //========================================================================
+    public JumpControllerState SetJumpState()
+    {
+        if(PlayerTouchingGround())
+        {
+            return JumpControllerState.Walking_Running;
+        }
+
+        if(jumpControllerState == JumpControllerState.Climbing_Step)
+        {
+            if (IsHeadAboveWall())
+            {
+                return JumpControllerState.Climbing_OverLedge;
+            }
+
+            if(!IsContactingWall())
+            {
+                return JumpControllerState.WallJump;
+            }
+            
+            if(Vector2.Distance(rigidBody.position, climbStepTarget) < 0.01)
+            {
+                // completed climb step; re-init climbing
+                return JumpControllerState.Init_Climbing;
+            }
+
+            return JumpControllerState.Climbing_Step;
+        }
+
+        if(IsContactingWall())
+        {
+            if (isClimbing)
+            {
+                if (fallTimer > beginFallTime_sec)
+                {
+                    return JumpControllerState.Climbing_Falling;
+                }
+                if (IsHeadAboveWall())
+                {
+                    return JumpControllerState.Climbing_OverLedge;
+                }
+                return JumpControllerState.Climbing;
+            }
+            else 
+            {
+                return JumpControllerState.Init_Climbing;
+            }
+        }
+
+        return JumpControllerState.Airborne;
+    } 
+
+    void SetAncillariesBasedOnState()
+    {
         switch (jumpControllerState)
         {
             case JumpControllerState.Airborne:
             {
                 isClimbing = false;
-                rigidBody.gravityScale = originalGravityScale;
+                if (rigidBody.velocity.y > 0)
+                {
+                    rigidBody.gravityScale = originalGravityScale*jumpAscentGravityScale;
+                }
+                else 
+                {
+                    rigidBody.gravityScale = originalGravityScale*jumpDescentGravityScale;
+                }
+                
                 break;
             }   
             case JumpControllerState.Walking_Running:
             {
                 isClimbing = false;
+                rigidBody.gravityScale = originalGravityScale;
                 break;
             }
             case JumpControllerState.Init_Climbing:
@@ -75,69 +146,20 @@ public class JumpController : MonoBehaviour
                 rigidBody.gravityScale = originalGravityScale / 3;
                 break;
             }
-        }
-    }
-
-    //========================================================================
-    public JumpControllerState SetJumpState()
-    {
-        if(PlayerTouchingGround())
-        {
-            return JumpControllerState.Walking_Running;
-        }
-
-        if(jumpControllerState == JumpControllerState.Climbing_Step)
-        {
-            if (IsHeadAboveWall())
+            case JumpControllerState.WallJump:
             {
-                return JumpControllerState.Climbing_OverLedge;
-            }
-            if(!IsContactingWall() && !IsHeadAboveWall())
-            {
-                isClimbing = false;
-                rigidBody.gravityScale = originalGravityScale;
-                if (jumpTimer - timeLastJump < 0.15f)
+                if (jumpTimer - timeLastJump < allowWallJumpTimeThreshold_sec)
                 {
-                    float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
-                    rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
+                    float jumpForce = movementController.isSprinting ? sprintJumpForce : normalJumpForce;
+                    rigidBody.AddForce(new Vector2(0, 1) * jumpForce, ForceMode2D.Impulse);
                     jumpTimer = 0;
                     timeLastJump = 999f;
                 }
-                return JumpControllerState.Airborne;
-            }
-
-            if(Vector2.Distance(rigidBody.position, climbStepTarget) < 0.01)
-            {
-                return JumpControllerState.Init_Climbing;
-            }
-            else 
-            {
-                return JumpControllerState.Climbing_Step;
+                jumpControllerState = JumpControllerState.Airborne;
+                goto case JumpControllerState.Airborne;
             }
         }
-
-        if(IsContactingWall())
-        {
-            if (isClimbing)
-            {
-                if (fallTimer > beginFallTime)
-                {
-                    return JumpControllerState.Climbing_Falling;
-                }
-                if (IsHeadAboveWall())
-                {
-                    return JumpControllerState.Climbing_OverLedge;
-                }
-                return JumpControllerState.Climbing;
-            }
-            else 
-            {
-                return JumpControllerState.Init_Climbing;
-            }
-        }
-
-        return JumpControllerState.Airborne;
-    } 
+    }
 
     //========================================================================
     public void Jump() 
@@ -147,25 +169,28 @@ public class JumpController : MonoBehaviour
         {
             case JumpControllerState.Walking_Running:
             {
-                float jumpForce = sprintController.isSprinting ? sprintJumpForce : normalJumpForce;
-                rigidBody.AddForce(new Vector2(rigidBody.velocity.x, 1) * jumpForce, ForceMode2D.Impulse);
+                float jumpForce = movementController.isSprinting ? sprintJumpForce : normalJumpForce;
+                rigidBody.AddForce(new Vector2(0, 1) * jumpForce, ForceMode2D.Impulse);
                 break;
             }
             case JumpControllerState.Climbing_Falling:
             {
+                // Go back to climbing if jump pressed while falling down wall
                 rigidBody.gravityScale = 0;
                 rigidBody.velocity = Vector2.zero;
                 goto case JumpControllerState.Climbing;
             }
             case JumpControllerState.Climbing: 
             {
-                climbStepTarget = rigidBody.position + new Vector2(0, 15f * Time.fixedDeltaTime);
+                // Initiate climb step if jump pressed while on wall
+                climbStepTarget = rigidBody.position + new Vector2(0, climbDistance * Time.fixedDeltaTime);
                 jumpControllerState = JumpControllerState.Climbing_Step;
                 playerAnimator.SetJumpButtonPressed();
                 break;
             }
             case JumpControllerState.Climbing_OverLedge:
             {
+                // Jump over the edge freely if jump pressed while head is over wall
                 jumpControllerState = JumpControllerState.Airborne;
                 goto case JumpControllerState.Walking_Running;
             }
@@ -191,7 +216,7 @@ public class JumpController : MonoBehaviour
         
         Vector2 direction = movementController.movementInput > 0 ? Vector2.right : Vector2.left;
         Vector2 rayStart = (Vector2)transform.position; 
-        float wallCheckDistance = 0.25f;
+        float wallCheckDistance = 0.5f;
         RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
         return hit.collider != null && hit.collider.CompareTag("Terrain");
     }    
@@ -202,7 +227,7 @@ public class JumpController : MonoBehaviour
         Collider2D playerCollider = GetComponent<Collider2D>();
         Vector2 direction = wallDirection > 0 ? Vector2.right : Vector2.left;
         Vector2 rayStart = (Vector2)transform.position + new Vector2(0, playerCollider.bounds.extents.y); 
-        float wallCheckDistance = 0.25f;
+        float wallCheckDistance = 0.5f;
         RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
         return hit.collider == null || !hit.collider.CompareTag("Terrain");
     }
@@ -217,5 +242,6 @@ public enum JumpControllerState
     Climbing_Step,
     Climbing_Falling,
     Climbing_OverLedge,
-    Climbing_DirectionChange
+    Climbing_DirectionChange,
+    WallJump
 }
