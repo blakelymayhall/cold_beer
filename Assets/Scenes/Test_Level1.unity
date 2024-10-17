@@ -9676,9 +9676,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6c32b7d54db4a14b201717f1a4906f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
-  airMoveSpeed: 5
+  baseSpeed: 7
+  targetSpeed: 0
   sprintMultiplier: 1.3
+  airSpeedMultiplier: 0.7
   isSprinting: 0
   rigidBody: {fileID: 2013792135}
   movementInput: 0
