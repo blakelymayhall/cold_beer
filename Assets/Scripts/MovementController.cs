@@ -27,23 +27,18 @@ public class MovementController : MonoBehaviour
     //========================================================================
     private void FixedUpdate() 
     {
-        // this isn't right. 
-        // if jump while sprinting, keep the sprint speed
-        // if sprint while jumping, wait to hit ground before sprinting
-        if(jumpController.jumpControllerState == JumpControllerState.Walking_Running)
+        isSprinting = sprintingInputPressed;
+        float baseSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
+        
+        if (jumpController.jumpControllerState == JumpControllerState.Walking_Running)
         {
-            isSprinting = sprintingInputPressed;
-            moveSpeed = isSprinting ? originalSpeed * sprintMultiplier : originalSpeed;
+            moveSpeed = baseSpeed;
         }
-        else 
+        else
         {
-            isSprinting = false;
+            moveSpeed = 0.7f * baseSpeed;
         }
 
-        if (jumpController.jumpControllerState != JumpControllerState.Walking_Running)
-        {
-            moveSpeed = airMoveSpeed;
-        }
         rigidBody.velocity = new Vector2(movementInput * moveSpeed, rigidBody.velocity.y);
     }
 
