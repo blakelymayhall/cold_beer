@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class JumpController : MonoBehaviour
 {
@@ -218,7 +220,47 @@ public class JumpController : MonoBehaviour
         Vector2 rayStart = (Vector2)transform.position; 
         float wallCheckDistance = 0.5f;
         RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
-        return hit.collider != null && hit.collider.CompareTag("Terrain");
+        return hit.collider != null && hit.collider.CompareTag("Terrain") && !IsWallShort(hit);
+    }    
+
+    //========================================================================
+    bool IsWallShort(RaycastHit2D hit)
+    {
+        Tilemap hitTilemap = hit.collider.GetComponent<Tilemap>();
+
+        if (hitTilemap != null)
+        {
+            Vector3 hitPoint = hit.point;
+            Vector3Int tilePosition = hitTilemap.WorldToCell(hitPoint);
+
+            // check left tile and right tiles to find adjacent 'ground'
+            // if ground within one unit, then the tile is too short to init climb
+            Vector3Int down = new Vector3Int(0, -1, 0); 
+            Vector3Int left = new Vector3Int(-1, 0, 0); 
+            Vector3Int right = new Vector3Int(1, 0, 0);
+
+            // left
+            TileBase tile = hitTilemap.GetTile(tilePosition + left);
+            if(tile == null) // no tile to the left, check if ground is one down
+            {  
+                if(hitTilemap.GetTile(tilePosition + left + down) != null)
+                {
+                    return true;
+                }
+            }
+
+            // right
+            tile = hitTilemap.GetTile(tilePosition + right);
+            if(tile == null) // no tile to the right, check if ground is one down
+            {  
+                if(hitTilemap.GetTile(tilePosition + right + down) != null)
+                {
+                    return true;
+                }
+            }   
+        }
+
+        return false;
     }    
 
     //========================================================================
