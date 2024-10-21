@@ -30,7 +30,7 @@ public class JumpController : MonoBehaviour
 
     private const float beginFallTime_sec = 0.45f;
     private const float allowWallJumpTimeThreshold_sec = 0.15f;
-    private const float climbDistance = 50f;
+    private const float climbDistance = 33f;
 
     //========================================================================
     void Start()
@@ -47,8 +47,7 @@ public class JumpController : MonoBehaviour
         jumpTimer += Time.fixedDeltaTime;
 
         jumpControllerState = SetJumpState();
-        SetAncillariesBasedOnState();
-        
+        SetEnvironmentBasedOnState();
     }
 
     //========================================================================
@@ -61,7 +60,7 @@ public class JumpController : MonoBehaviour
 
         if(jumpControllerState == JumpControllerState.Climbing_Step)
         {
-            if (IsHeadAboveWall())
+            if (IsOnTopTile())
             {
                 return JumpControllerState.Climbing_OverLedge;
             }
@@ -88,7 +87,7 @@ public class JumpController : MonoBehaviour
                 {
                     return JumpControllerState.Climbing_Falling;
                 }
-                if (IsHeadAboveWall())
+                if (IsOnTopTile())
                 {
                     return JumpControllerState.Climbing_OverLedge;
                 }
@@ -103,7 +102,7 @@ public class JumpController : MonoBehaviour
         return JumpControllerState.Airborne;
     } 
 
-    void SetAncillariesBasedOnState()
+    void SetEnvironmentBasedOnState()
     {
         switch (jumpControllerState)
         {
@@ -264,14 +263,32 @@ public class JumpController : MonoBehaviour
     }    
 
     //========================================================================
-    bool IsHeadAboveWall()
+    bool IsOnTopTile()
     {
+        Vector2 direction = movementController.movementInput > 0 ? Vector2.right : Vector2.left;
         Collider2D playerCollider = GetComponent<Collider2D>();
-        Vector2 direction = wallDirection > 0 ? Vector2.right : Vector2.left;
-        Vector2 rayStart = (Vector2)transform.position + new Vector2(0, playerCollider.bounds.extents.y); 
+        Vector2 rayStart = new Vector2(playerCollider.bounds.center.x, playerCollider.bounds.min.y);
         float wallCheckDistance = 0.5f;
         RaycastHit2D hit = Physics2D.Raycast(rayStart, direction, wallCheckDistance, ~LayerMask.GetMask("Player"));
-        return hit.collider == null || !hit.collider.CompareTag("Terrain");
+        if (hit.collider == null) 
+        {
+            return false;
+        }
+        
+        Tilemap hitTilemap = hit.collider.GetComponent<Tilemap>();
+        if (hitTilemap != null)
+        {
+            Vector3 hitPoint = hit.point + direction*0.1f;
+            Vector3Int tilePosition = hitTilemap.WorldToCell(hitPoint);
+            Vector3Int up = new Vector3Int(0, 1, 0); 
+            TileBase tile = hitTilemap.GetTile(tilePosition + up);
+            if(tile == null) 
+            {  
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
 
