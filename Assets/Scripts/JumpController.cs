@@ -46,12 +46,12 @@ public class JumpController : MonoBehaviour
         fallTimer += Time.fixedDeltaTime;
         jumpTimer += Time.fixedDeltaTime;
 
-        jumpControllerState = SetJumpState();
+        jumpControllerState = SetJumpControllerState();
         SetEnvironmentBasedOnState();
     }
 
     //========================================================================
-    public JumpControllerState SetJumpState()
+    public JumpControllerState SetJumpControllerState()
     {
         if(PlayerTouchingGround())
         {
@@ -229,7 +229,8 @@ public class JumpController : MonoBehaviour
 
         if (hitTilemap != null)
         {
-            Vector3 hitPoint = hit.point;
+            Vector2 direction = movementController.movementInput > 0 ? Vector2.right : Vector2.left;
+            Vector3 hitPoint = hit.point + direction*0.1f;
             Vector3Int tilePosition = hitTilemap.WorldToCell(hitPoint);
 
             // check left tile and right tiles to find adjacent 'ground'
@@ -274,7 +275,7 @@ public class JumpController : MonoBehaviour
         {
             return false;
         }
-        
+
         Tilemap hitTilemap = hit.collider.GetComponent<Tilemap>();
         if (hitTilemap != null)
         {
