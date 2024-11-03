@@ -87,10 +87,6 @@ public class JumpController : MonoBehaviour
                 {
                     return JumpControllerState.Climbing_Falling;
                 }
-                if (IsOnTopTile())
-                {
-                    return JumpControllerState.Climbing_OverLedge;
-                }
                 return JumpControllerState.Climbing;
             }
             else 
@@ -176,7 +172,11 @@ public class JumpController : MonoBehaviour
             }
             case JumpControllerState.Climbing_Falling:
             {
-                // Go back to climbing if jump pressed while falling down wall
+                // Go back to climbing if jump pressed while falling down wall and not on top tile
+                if (IsOnTopTile())
+                {
+                    goto case JumpControllerState.Climbing_OverLedge;
+                }
                 rigidBody.gravityScale = 0;
                 rigidBody.velocity = Vector2.zero;
                 goto case JumpControllerState.Climbing;
@@ -184,6 +184,10 @@ public class JumpController : MonoBehaviour
             case JumpControllerState.Climbing: 
             {
                 // Initiate climb step if jump pressed while on wall
+                if (IsOnTopTile())
+                {
+                    goto case JumpControllerState.Climbing_OverLedge;
+                }
                 climbStepTarget = rigidBody.position + new Vector2(0, climbDistance * Time.fixedDeltaTime);
                 jumpControllerState = JumpControllerState.Climbing_Step;
                 playerAnimator.SetJumpButtonPressed();
